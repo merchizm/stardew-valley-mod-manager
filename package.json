@@ -1,0 +1,35 @@
+{
+    "name": "stardew-valley-mod-manager",
+    "version": "1.0.0",
+    "description": "Stardew Valley Mod Yöneticisi",
+    "main": "main.js",
+    "scripts": {
+        "start": "electron .",
+        "dev": "electron . --debug",
+        "build": "electron-builder"
+    },
+    "author": "",
+    "license": "MIT",
+    "devDependencies": {
+        "electron": "^28.1.0",
+        "electron-builder": "^24.9.1",
+        "typescript": "^5.3.3"
+    },
+    "build": {
+        "appId": "com.stardewvalley.modmanager",
+        "productName": "Stardew Valley Mod Yöneticisi",
+        "directories": {
+            "output": "dist"
+        },
+        "win": {
+            "target": "nsis",
+            "icon": "icon.png"
+        },
+        "mac": {
+            "icon": "icon.png"
+        },
+        "linux": {
+            "icon": "icon.png"
+        }
+    }
+}

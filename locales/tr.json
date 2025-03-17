@@ -1,0 +1,68 @@
+{
+    "app": {
+        "title": "Stardew Valley Mod Yöneticisi",
+        "header": "🌾 Stardew Valley Mod Yöneticisi 🌾"
+    },
+    "menu": {
+        "help": "Yardım",
+        "languages": "Dil",
+        "themes": "Temalar",
+        "theme_default": "Varsayılan",
+        "theme_barbie": "Barbie",
+        "theme_dark": "Karanlık",
+        "theme_minecraft": "Minecraft",
+        "smapiSite": "SMAPI Resmi Sitesi",
+        "wiki": "Stardew Valley Wiki",
+        "nexusMods": "Nexus Mods",
+        "about": "Uygulama Hakkında"
+    },
+    "game": {
+        "location": "Stardew Valley Konumu:",
+        "searching": "Aranıyor...",
+        "notFound": "Bulunamadı!",
+        "startGame": "Oyunu Başlat",
+        "openModsFolder": "Mod Klasörünü Aç",
+        "openDeactivatedFolder": "Devre Dışı Mod Klasörünü Aç",
+        "compactView": "Kompakt Görünüm",
+        "gameNotFound": "Oyun konumu bulunamadı!",
+        "gameStarting": "Oyun Başlatılıyor...",
+        "gameRunning": "Oyun Çalışıyor",
+        "gameStartError": "Oyun başlatılamadı. SMAPI kurulu olduğundan emin olun.",
+        "generalError": "Bir hata oluştu.",
+        "folderOpenError": "Klasör açılırken bir hata oluştu."
+    },
+    "mods": {
+        "refresh": "🔄 Yenile",
+        "activeMods": "Aktif Modlar",
+        "deactivatedMods": "Deaktif Modlar",
+        "invalidMods": "Hatalı Modlar",
+        "activate": "Aktifleştir",
+        "deactivate": "Devre Dışı Bırak",
+        "delete": "Sil",
+        "noManifest": "manifest.json dosyası bulunamadı",
+        "author": "Yapımcı: ",
+        "error": "Hata: ",
+        "processing": "⏳ İşlem yapılıyor...",
+        "success": "İşlem başarıyla tamamlandı!",
+        "gameStartSuccess": "Oyun başarıyla başlatıldı!"
+    },
+    "errors": {
+        "error": "Hata",
+        "deactivateError": "Mod devre dışı bırakma hatası",
+        "activateError": "Mod etkinleştirme hatası",
+        "deleteError": "Mod silme hatası",
+        "themeError": "Tema yükleme hatası",
+        "gameStartError": "Oyun başlatma hatası",
+        "gamePathNotFound": "Oyun dizini bulunamadı",
+        "smapiNotFound": "SMAPI bulunamadı. Lütfen SMAPI'yi yüklediğinizden emin olun."
+    },
+    "smapi": {
+        "notFound": "⚠️ Stardew Valley kurulumu bulunamadı!",
+        "notInstalled": "⚠️ SMAPI kurulu değil! Modları kullanabilmek için SMAPI'yi kurmanız gerekiyor.",
+        "installed": "✅ SMAPI kurulu ve kullanıma hazır!"
+    },
+    "themes": {
+        "themeChanged": "Tema değiştirildi!",
+        "themeSaved": "Tema tercihiniz kaydedildi!"
+    }
+}

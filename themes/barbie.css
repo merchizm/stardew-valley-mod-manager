@@ -1,0 +1,59 @@
+:root {
+    /* Ana Renkler */
+    --bg-color: #FF69B4;
+    --bg-pattern: linear-gradient(rgba(255, 105, 180, 0.8), rgba(255, 105, 180, 0.8));
+    --container-bg: #FFF0F5;
+    --container-border: #FF1493;
+    --text-color: #DB7093;
+    --header-shadow: #C71585;
+
+    /* Buton Renkleri */
+    --button-bg: #FF69B4;
+    --button-border: #FF1493;
+    --button-text: #FFFFFF;
+    --button-shadow-outer: #C71585;
+    --button-shadow-inner-dark: #DB7093;
+    --button-shadow-inner-light: #FFC0CB;
+
+    /* Tehlike Butonları */
+    --danger-button-bg: #C71585;
+    --danger-button-border: #8B008B;
+    --danger-button-shadow-outer: #8B008B;
+    --danger-button-shadow-inner-dark: #9932CC;
+    --danger-button-shadow-inner-light: #D8BFD8;
+
+    /* Oynat Butonu */
+    --play-button-bg: #FF1493;
+    --play-button-border: #C71585;
+    --play-button-shadow-outer: #C71585;
+    --play-button-shadow-inner-dark: #DB7093;
+    --play-button-shadow-inner-light: #FFB6C1;
+
+    /* Kutu Renkleri */
+    --box-bg: #FFC0CB;
+    --box-border: #FF69B4;
+    --inner-box-bg: rgba(255, 240, 245, 0.5);
+
+    /* Uyarı Kutuları */
+    --warning-bg: #FFC0CB;
+    --warning-border: #C71585;
+    --warning-text: #C71585;
+    --success-bg: #DDA0DD;
+    --success-border: #9932CC;
+    --success-text: #9932CC;
+
+    /* Kategori Renkleri */
+    --category-text: #FF1493;
+    --category-shadow: #C71585;
+
+    /* Oyun Yolu Konteyner */
+    --game-path-bg-start: #FFC0CB;
+    --game-path-bg-end: #FFB6C1;
+    --game-path-border: #FF69B4;
+    --game-path-label: #C71585;
+    --game-path-text: #DB7093;
+
+    /* Animasyonlar */
+    --float-animation-distance: -15px;
+    --background-scroll-speed: 15s;
+}

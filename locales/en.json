@@ -1,0 +1,68 @@
+{
+    "app": {
+        "title": "Stardew Valley Mod Manager",
+        "header": "🌾 Stardew Valley Mod Manager 🌾"
+    },
+    "menu": {
+        "help": "Help",
+        "languages": "Language",
+        "themes": "Themes",
+        "theme_default": "Default",
+        "theme_barbie": "Barbie",
+        "theme_dark": "Dark",
+        "theme_minecraft": "Minecraft",
+        "smapiSite": "SMAPI Official Site",
+        "wiki": "Stardew Valley Wiki",
+        "nexusMods": "Nexus Mods",
+        "about": "About Application"
+    },
+    "game": {
+        "location": "Stardew Valley Location:",
+        "searching": "Searching...",
+        "notFound": "Not Found!",
+        "startGame": "Start Game",
+        "openModsFolder": "Open Mods Folder",
+        "openDeactivatedFolder": "Open Deactivated Mods Folder",
+        "compactView": "Compact View",
+        "gameNotFound": "Game location not found!",
+        "gameStarting": "Game Starting...",
+        "gameRunning": "Game Running",
+        "gameStartError": "Couldn't start the game. Make sure SMAPI is installed.",
+        "generalError": "An error occurred.",
+        "folderOpenError": "An error occurred while opening the folder."
+    },
+    "mods": {
+        "refresh": "🔄 Refresh",
+        "activeMods": "Active Mods",
+        "deactivatedMods": "Deactivated Mods",
+        "invalidMods": "Invalid Mods",
+        "activate": "Activate",
+        "deactivate": "Deactivate",
+        "delete": "Delete",
+        "noManifest": "manifest.json file not found",
+        "author": "Author: ",
+        "error": "Error: ",
+        "processing": "⏳ Processing...",
+        "success": "Operation completed successfully!",
+        "gameStartSuccess": "Game started successfully!"
+    },
+    "errors": {
+        "error": "Error",
+        "deactivateError": "Mod deactivation error",
+        "activateError": "Mod activation error",
+        "deleteError": "Mod deletion error",
+        "themeError": "Theme loading error",
+        "gameStartError": "Game start error",
+        "gamePathNotFound": "Game directory not found",
+        "smapiNotFound": "SMAPI not found. Please make sure you have installed SMAPI."
+    },
+    "smapi": {
+        "notFound": "⚠️ Stardew Valley installation not found!",
+        "notInstalled": "⚠️ SMAPI is not installed! You need to install SMAPI to use mods.",
+        "installed": "✅ SMAPI is installed and ready to use!"
+    },
+    "themes": {
+        "themeChanged": "Theme changed!",
+        "themeSaved": "Your theme preference has been saved!"
+    }
+}
