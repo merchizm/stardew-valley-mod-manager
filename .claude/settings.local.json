@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(copy icon.png \"src-tauri\\icons\\32x32.png\")",
+      "Bash(copy icon.png \"src-tauri\\icons\\128x128.png\")",
+      "Bash(copy icon.png \"src-tauri\\icons\\128x128@2x.png\")",
+      "Bash(copy icon.png \"src-tauri\\icons\\icon.ico\")",
+      "Bash(npm install)",
+      "Bash(cargo check:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npx tauri:*)",
+      "Bash(npm install:*)",
+      "Bash(cargo clean:*)",
+      "WebSearch"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

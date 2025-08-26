@@ -1,5 +1,81 @@
-// Bu dosya renderer process'te çalışacak olan JavaScript kodunu içerir
-console.log('Renderer process başlatıldı')
+// Bu dosya Tauri frontend'inde çalışacak olan JavaScript kodunu içerir
+console.log('Tauri frontend başlatıldı')
+console.log('User agent:', navigator.userAgent)
+console.log('Window location:', window.location.href)
+console.log('Is file protocol?', window.location.protocol === 'file:')
+console.log('Is https?', window.location.protocol === 'https:')
+console.log('Is tauri?', window.location.protocol === 'tauri:' || window.location.protocol === 'https:')
+console.log('Available globals:', Object.keys(window).filter(key => key.includes('TAURI') || key.includes('tauri')))
+console.log('All window keys (first 20):', Object.keys(window).slice(0, 20))
+
+// Tauri API globals - will be set when Tauri is available
+let invoke = null;
+let listen = null;
+
+// Initialize Tauri API
+function initTauri() {
+    console.log('Checking for Tauri APIs...');
+    console.log('Current protocol:', window.location.protocol);
+    console.log('Current host:', window.location.host);
+    console.log('User agent:', navigator.userAgent);
+    console.log('window.__TAURI__ exists:', !!window.__TAURI__);
+    
+    // Check if we're in Tauri environment
+    const isTauri = window.location.protocol === 'tauri:' || 
+                   (window.__TAURI__ && typeof window.__TAURI__ === 'object');
+    
+    console.log('Is Tauri environment:', isTauri);
+    
+    if (window.__TAURI__) {
+        console.log('__TAURI__ contents:', Object.keys(window.__TAURI__));
+        if (window.__TAURI__.tauri) {
+            console.log('tauri contents:', Object.keys(window.__TAURI__.tauri));
+        }
+        if (window.__TAURI__.event) {
+            console.log('event contents:', Object.keys(window.__TAURI__.event));
+        }
+    }
+    
+    // Try multiple ways to access Tauri APIs
+    if (window.__TAURI__ && window.__TAURI__.tauri && window.__TAURI__.event) {
+        invoke = window.__TAURI__.tauri.invoke;
+        listen = window.__TAURI__.event.listen;
+        console.log('Tauri APIs loaded successfully via __TAURI__');
+        return true;
+    }
+    
+    // Alternative access method
+    if (window.__TAURI_INVOKE__ && window.__TAURI_LISTEN__) {
+        invoke = window.__TAURI_INVOKE__;
+        listen = window.__TAURI_LISTEN__;
+        console.log('Tauri APIs loaded successfully via globals');
+        return true;
+    }
+    
+    console.log('Tauri APIs not found');
+    return false;
+}
+
+// Wait for Tauri to be available
+function waitForTauri() {
+    return new Promise((resolve) => {
+        let attempts = 0;
+        const checkTauri = () => {
+            console.log(`Tauri check attempt ${attempts + 1}`);
+            if (initTauri()) {
+                console.log('Tauri became available!');
+                resolve(true);
+            } else if (attempts < 200) { // More attempts
+                attempts++;
+                setTimeout(checkTauri, 50);
+            } else {
+                console.error('Tauri not available after waiting');
+                resolve(false);
+            }
+        };
+        checkTauri();
+    });
+}
 
 // Çeviriler için global değişkenler
 let currentLanguage = 'tr';
@@ -103,6 +179,27 @@ function showToast(message, duration = 3000) {
 
 // Çeviri fonksiyonu
 function t(key) {
+    if (!translations || Object.keys(translations).length === 0) {
+        // Fallback translations for demo mode
+        const fallbackTranslations = {
+            'app.header': '🌾 Stardew Valley Mod Yöneticisi 🌾',
+            'game.location': 'Stardew Valley Konumu:',
+            'mods.refresh': '🔄 Yenile',
+            'mods.activeMods': 'Aktif Modlar',
+            'mods.deactivatedMods': 'Deaktif Modlar', 
+            'mods.invalidMods': 'Hatalı Modlar',
+            'game.startGame': '🎮 Oyunu Başlat',
+            'game.openModsFolder': '📁 Mod Klasörü',
+            'game.openDeactivatedFolder': '📁 Deaktif Modlar',
+            'game.compactView': 'Kompakt Görünüm',
+            'smapi.installed': 'SMAPI Kurulu',
+            'smapi.notFound': 'Oyun bulunamadı',
+            'smapi.notInstalled': 'SMAPI kurulu değil'
+        };
+        
+        return fallbackTranslations[key] || key;
+    }
+    
     const keys = key.split('.');
     let value = translations;
     
@@ -265,65 +362,89 @@ function createModElement(mod, isInvalid = false) {
 
 // Mod listesini güncelle
 async function updateModList() {
-    const mods = await window.electron.ipcRenderer.invoke('scan-mods');
+    if (!invoke) {
+        console.error('Tauri invoke not available');
+        return;
+    }
     
-    // Mod listelerini temizle
-    document.getElementById('active-mods').innerHTML = `<div class="mod-category-title">${t('mods.activeMods')}</div>`;
-    document.getElementById('deactivated-mods').innerHTML = `<div class="mod-category-title">${t('mods.deactivatedMods')}</div>`;
-    document.getElementById('invalid-mods').innerHTML = `<div class="mod-category-title">${t('mods.invalidMods')}</div>`;
+    try {
+        const mods = await invoke('scan_mods');
+        
+        // Mod listelerini temizle
+        document.getElementById('active-mods').innerHTML = `<div class="mod-category-title">${t('mods.activeMods')}</div>`;
+        document.getElementById('deactivated-mods').innerHTML = `<div class="mod-category-title">${t('mods.deactivatedMods')}</div>`;
+        document.getElementById('invalid-mods').innerHTML = `<div class="mod-category-title">${t('mods.invalidMods')}</div>`;
 
-    if (!mods) return;
+        if (!mods) return;
 
-    // Aktif modları ekle
-    mods.active.forEach(mod => {
-        mod.active = true;
-        document.getElementById('active-mods').appendChild(createModElement(mod));
-    });
+        // Aktif modları ekle
+        mods.active.forEach(mod => {
+            mod.active = true;
+            document.getElementById('active-mods').appendChild(createModElement(mod));
+        });
 
-    // Deaktif modları ekle
-    mods.deactivated.forEach(mod => {
-        mod.active = false;
-        document.getElementById('deactivated-mods').appendChild(createModElement(mod));
-    });
+        // Deaktif modları ekle
+        mods.deactivated.forEach(mod => {
+            mod.active = false;
+            document.getElementById('deactivated-mods').appendChild(createModElement(mod));
+        });
 
-    // Geçersiz modları ekle
-    mods.invalid.forEach(mod => {
-        document.getElementById('invalid-mods').appendChild(createModElement(mod, true));
-    });
+        // Geçersiz modları ekle
+        mods.invalid.forEach(mod => {
+            document.getElementById('invalid-mods').appendChild(createModElement(mod, true));
+        });
+    } catch (error) {
+        console.error('Failed to update mod list:', error);
+    }
 }
 
 // SMAPI durumunu kontrol et ve göster
 async function checkAndDisplaySMAPIStatus() {
-    const smapiStatus = document.getElementById('smapi-status');
-    const gameInfo = await window.electron.ipcRenderer.invoke('get-game-path');
-
-    if (!gameInfo) {
-        smapiStatus.innerHTML = `
-            <div class="warning-box">
-                ${t('smapi.notFound')}
-            </div>
-        `;
+    if (!invoke) {
+        console.error('Tauri invoke not available');
         return;
     }
+    
+    try {
+        const smapiStatus = document.getElementById('smapi-status');
+        const gameInfo = await invoke('get_game_path');
 
-    if (!gameInfo.hasSMAPI) {
-        smapiStatus.innerHTML = `
-            <div class="warning-box">
-                ${t('smapi.notInstalled')}
-            </div>
-        `;
-    } else {
-        smapiStatus.innerHTML = `
-            <div class="success-box">
-                ${t('smapi.installed')}
-            </div>
-        `;
+        if (!gameInfo) {
+            smapiStatus.innerHTML = `
+                <div class="warning-box">
+                    ${t('smapi.notFound')}
+                </div>
+            `;
+            return;
+        }
+
+        if (!gameInfo.has_smapi) {
+            smapiStatus.innerHTML = `
+                <div class="warning-box">
+                    ${t('smapi.notInstalled')}
+                </div>
+            `;
+        } else {
+            smapiStatus.innerHTML = `
+                <div class="success-box">
+                    ${t('smapi.installed')}
+                </div>
+            `;
+        }
+    } catch (error) {
+        console.error('Failed to check SMAPI status:', error);
     }
 }
 
 // Mod işlemlerini yönet
 async function handleModAction(folderName, modPath, action) {
     createClickSound();
+
+    if (!invoke) {
+        console.error('Tauri invoke not available');
+        alert('Application not ready. Please wait.');
+        return;
+    }
 
     try {
         const modsContainer = document.querySelector('#mods');
@@ -343,36 +464,43 @@ async function handleModAction(folderName, modPath, action) {
         let success = false;
         let errorMessage = '';
 
-        if (action === 'delete') {
-            // Mod silme işlemi
-            success = await window.electron.ipcRenderer.invoke('delete-mod', { modPath });
-            if (!success) {
-                errorMessage = t('errors.deleteError');
+        try {
+            if (action === 'delete') {
+                // Mod silme işlemi
+                success = await invoke('delete_mod', { modPath });
+                if (!success) {
+                    errorMessage = t('errors.deleteError');
+                }
+            } else if (action === 'activate') {
+                // Mod etkinleştirme işlemi
+                success = await invoke('toggle_mod', { 
+                    modPath,
+                    isActive: false,
+                    gamePath
+                });
+                if (!success) {
+                    errorMessage = t('errors.activateError');
+                }
+            } else if (action === 'deactivate') {
+                // Mod devre dışı bırakma işlemi
+                success = await invoke('toggle_mod', { 
+                    modPath,
+                    isActive: true,
+                    gamePath
+                });
+                if (!success) {
+                    errorMessage = t('errors.deactivateError');
+                }
             }
-        } else if (action === 'activate') {
-            // Mod etkinleştirme işlemi
-            success = await window.electron.ipcRenderer.invoke('toggle-mod', { 
-                modPath,
-                gamePath,
-                action: 'activate'
-            });
-            if (!success) {
-                errorMessage = t('errors.activateError');
-            }
-        } else if (action === 'deactivate') {
-            // Mod devre dışı bırakma işlemi
-            success = await window.electron.ipcRenderer.invoke('toggle-mod', { 
-                modPath,
-                gamePath,
-                action: 'deactivate'
-            });
-            if (!success) {
-                errorMessage = t('errors.deactivateError');
-            }
+        } catch (invokeError) {
+            success = false;
+            errorMessage = invokeError.toString();
         }
 
         // Loading kaldırılıyor
-        modsContainer.removeChild(loadingEl);
+        if (modsContainer.contains(loadingEl)) {
+            modsContainer.removeChild(loadingEl);
+        }
 
         if (!success) {
             // Hata mesajı göster
@@ -384,7 +512,9 @@ async function handleModAction(folderName, modPath, action) {
             
             // 3 saniye sonra hata mesajını kaldır
             setTimeout(() => {
-                modsContainer.removeChild(errorEl);
+                if (modsContainer.contains(errorEl)) {
+                    modsContainer.removeChild(errorEl);
+                }
             }, 3000);
         } else {
             // Başarı mesajı göster
@@ -396,7 +526,9 @@ async function handleModAction(folderName, modPath, action) {
             
             // 2 saniye sonra başarı mesajını kaldır
             setTimeout(() => {
-                modsContainer.removeChild(successEl);
+                if (modsContainer.contains(successEl)) {
+                    modsContainer.removeChild(successEl);
+                }
             }, 2000);
 
             // Mod listesini yenile
@@ -701,32 +833,154 @@ style.textContent = `
 document.head.appendChild(style);
 
 // DOM yüklendiğinde çalışacak kodlar
-document.addEventListener('DOMContentLoaded', async () => {
-    // Dil ayarlarını yükle
-    const langData = await window.electron.ipcRenderer.invoke('get-language');
-    currentLanguage = langData.language;
-    translations = langData.translations;
+window.addEventListener('load', async () => {
+    console.log('Window loaded, checking for Tauri...');
     
-    // Tema ayarlarını yükle
-    const themeData = await window.electron.ipcRenderer.invoke('get-theme');
-    currentTheme = themeData.theme;
+    // Give Tauri a moment to inject its APIs
+    await new Promise(resolve => setTimeout(resolve, 100));
     
-    // Temayı uygula
-    updateTheme(currentTheme);
+    // Try to initialize Tauri immediately
+    let tauriReady = initTauri();
     
-    // UI metinlerini güncelle
-    updateUITexts();
+    if (!tauriReady) {
+        console.log('Tauri not immediately available, waiting...');
+        // Wait for Tauri to be available with longer timeout
+        tauriReady = await Promise.race([
+            waitForTauri(),
+            new Promise(resolve => setTimeout(() => resolve(false), 10000)) // 10 second timeout
+        ]);
+    }
+    
+    if (!tauriReady) {
+        console.warn('Tauri API not available - running in fallback mode');
+        // Don't block the UI - show warning but continue
+        const warningDiv = document.createElement('div');
+        warningDiv.style.cssText = 'position: fixed; top: 10px; right: 10px; background: #ffeb3b; color: #333; padding: 10px; border-radius: 5px; z-index: 9999; font-family: sans-serif; font-size: 12px;';
+        warningDiv.textContent = 'Warning: Running in browser mode - functionality limited';
+        document.body.appendChild(warningDiv);
+        
+        // Hide warning after 5 seconds
+        setTimeout(() => warningDiv.remove(), 5000);
+    } else {
+        console.log('Tauri API initialized successfully');
+    }
+    
+    // Set up Tauri event listeners only if Tauri is available
+    if (tauriReady && listen) {
+        try {
+            await listen('language-changed', (event) => {
+                currentLanguage = event.payload.language;
+                translations = event.payload.translations;
+                updateUITexts();
+                updateModList();
+            });
 
-    // SMAPI durumunu kontrol et
-    await checkAndDisplaySMAPIStatus();
+            await listen('theme-changed', (event) => {
+                currentTheme = event.payload.theme;
+                updateTheme(currentTheme);
+                showToast(translations.themes?.themeChanged || 'Tema değiştirildi!');
+            });
 
-    // Oyun yolunu göster
-    const gameInfo = await window.electron.ipcRenderer.invoke('get-game-path');
-    const gamePathElement = document.getElementById('game-path');
-    gamePathElement.textContent = gameInfo ? gameInfo.gamePath : t('smapi.notFound');
+            await listen('game-start-result', (event) => {
+                const result = event.payload;
+                const startButton = document.querySelector('.action-button.play');
+                
+                if (!result.success) {
+                    console.error('Oyun başlatma başarısız:', result.message, result.error);
+                    alert(result.message + ": " + result.error);
+                    // Hata durumunda butonu tekrar aktif et
+                    startButton.disabled = false;
+                    startButton.style.opacity = '1';
+                    startButton.style.cursor = 'pointer';
+                    startButton.textContent = t('game.startGame');
+                } else {
+                    // Oyun başarıyla başlatıldı
+                    console.log('Oyun başarıyla başlatıldı, toast gösteriliyor');
+                    showToast(result.message, 3000);
+                    startButton.textContent = t('game.gameRunning');
+                    
+                    // Oyun kapandığında butonu tekrar aktif et
+                    const checkGameStatus = setInterval(async () => {
+                        try {
+                            const gameRunning = await invoke('check_game_status');
+                            if (!gameRunning) {
+                                clearInterval(checkGameStatus);
+                                startButton.disabled = false;
+                                startButton.style.opacity = '1';
+                                startButton.style.cursor = 'pointer';
+                                startButton.textContent = t('game.startGame');
+                            }
+                        } catch (error) {
+                            console.error('Failed to check game status:', error);
+                        }
+                    }, 5000);
+                }
+            });
+        } catch (error) {
+            console.error('Error setting up Tauri event listeners:', error);
+        }
+    }
 
-    // Mod listesini ilk kez yükle
-    await updateModList();
+    try {
+        if (tauriReady && invoke) {
+            // Dil ayarlarını yükle
+            const langData = await invoke('get_language');
+            currentLanguage = langData.language;
+            translations = langData.translations;
+            
+            // Tema ayarlarını yükle
+            const themeData = await invoke('get_theme');
+            currentTheme = themeData.theme;
+            
+            // Temayı uygula
+            updateTheme(currentTheme);
+            
+            // UI metinlerini güncelle
+            updateUITexts();
+
+            // SMAPI durumunu kontrol et
+            await checkAndDisplaySMAPIStatus();
+
+            // Oyun yolunu göster
+            const gameInfo = await invoke('get_game_path');
+            const gamePathElement = document.getElementById('game-path');
+            gamePathElement.textContent = gameInfo ? gameInfo.game_path : t('smapi.notFound');
+
+            // Mod listesini ilk kez yükle
+            await updateModList();
+        } else {
+            // Fallback mode - load basic UI without backend
+            console.log('Loading basic UI without Tauri backend');
+            
+            // Set default theme
+            currentTheme = 'default';
+            updateTheme(currentTheme);
+            
+            // Set default language
+            currentLanguage = 'tr';
+            translations = {}; // Empty translations - t() function will return keys
+            
+            // Update basic UI
+            updateUITexts();
+            
+            // Show placeholder content
+            const gamePathElement = document.getElementById('game-path');
+            if (gamePathElement) {
+                gamePathElement.textContent = 'Demo Mode - Backend not available';
+            }
+            
+            const smapiStatus = document.getElementById('smapi-status');
+            if (smapiStatus) {
+                smapiStatus.innerHTML = `
+                    <div class="warning-box">
+                        Demo Mode: Backend functionality not available
+                    </div>
+                `;
+            }
+        }
+    } catch (error) {
+        console.error('Initialization error:', error);
+    }
 
     // Aksiyon butonlarını ekle
     const modsContainer = document.getElementById('mods');
@@ -809,6 +1063,12 @@ async function startGame() {
     const startButton = document.querySelector('.action-button.play');
     console.log('startGame() çağrıldı, buton:', startButton);
     
+    if (!invoke) {
+        console.error('Tauri invoke not available');
+        alert('Application not ready. Please wait.');
+        return;
+    }
+    
     try {
         startButton.disabled = true;
         startButton.style.opacity = '0.5';
@@ -816,48 +1076,10 @@ async function startGame() {
         startButton.textContent = t('game.gameStarting');
         console.log('Oyun başlatma butonu devre dışı bırakıldı ve stil değiştirildi');
         
-        console.log('Oyun başlatma sonuç dinleyicisi oluşturuluyor...');
-        // Oyun başlatma sonucunu dinle
-        document.addEventListener('game-start-result', (event) => {
-            console.log('game-start-result olayı alındı:', event.detail);
-            const result = event.detail;
-            if (!result.success) {
-                console.error('Oyun başlatma başarısız:', result.message, result.error);
-                alert(result.message + ": " + result.error);
-                // Hata durumunda butonu tekrar aktif et
-                startButton.disabled = false;
-                startButton.style.opacity = '1';
-                startButton.style.cursor = 'pointer';
-                startButton.textContent = t('game.startGame');
-                console.log('Hata durumunda buton sıfırlandı');
-            } else {
-                // Oyun başarıyla başlatıldı
-                console.log('Oyun başarıyla başlatıldı, toast gösteriliyor');
-                showToast(result.message, 3000);
-                startButton.textContent = t('game.gameRunning');
-                
-                // Oyun kapandığında butonu tekrar aktif et
-                console.log('Oyun durumu izleme zamanlayıcısı başlatılıyor');
-                const checkGameStatus = setInterval(async () => {
-                    console.log('Oyun durumu kontrol ediliyor...');
-                    const gameRunning = await window.electron.ipcRenderer.invoke('check-game-status');
-                    console.log('Oyun çalışıyor mu?', gameRunning);
-                    if (!gameRunning) {
-                        console.log('Oyun kapandı, butonu sıfırlıyorum');
-                        clearInterval(checkGameStatus);
-                        startButton.disabled = false;
-                        startButton.style.opacity = '1';
-                        startButton.style.cursor = 'pointer';
-                        startButton.textContent = t('game.startGame');
-                    }
-                }, 5000); // Her 5 saniyede bir kontrol et
-            }
-        }, { once: true }); // Dinleyici sadece bir kez çalışacak
-
         // Oyunu başlat
-        console.log('start-game IPC çağrısı yapılıyor...');
-        const result = await window.electron.ipcRenderer.invoke('start-game');
-        console.log('start-game IPC çağrısı sonucu:', result);
+        console.log('start_game invoke çağrısı yapılıyor...');
+        const result = await invoke('start_game');
+        console.log('start_game invoke çağrısı sonucu:', result);
     } catch (error) {
         console.error('Oyun başlatma hatası (client):', error);
         alert(t('game.generalError'));
@@ -871,8 +1093,14 @@ async function startGame() {
 
 // Klasör aç
 async function openFolder(folderType) {
+    if (!invoke) {
+        console.error('Tauri invoke not available');
+        alert('Application not ready. Please wait.');
+        return;
+    }
+    
     try {
-        await window.electron.ipcRenderer.invoke('open-folder', folderType);
+        await invoke('open_folder', { folderType });
     } catch (error) {
         console.error('Klasör açma hatası:', error);
         alert(t('game.folderOpenError'));

@@ -1,556 +1,430 @@
-<!DOCTYPE html>
-<html>
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stardew Valley Mod Yöneticisi</title>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <style>
-        @keyframes float {
-            0% {
-                transform: translateY(0px);
-            }
-
-            50% {
-                transform: translateY(var(--float-animation-distance, -10px));
-            }
-
-            100% {
-                transform: translateY(0px);
-            }
-        }
-
-        @keyframes backgroundScroll {
-            from {
-                background-position: 0 0;
-            }
-
-            to {
-                background-position: -400px 0;
-            }
-        }
-
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.05);
-            }
-
-            100% {
-                transform: scale(1);
-            }
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes glow {
-            0% {
-                filter: drop-shadow(0 0 2px var(--button-shadow-inner-light, #6EAB8A));
-            }
-
-            50% {
-                filter: drop-shadow(0 0 8px var(--button-shadow-inner-light, #6EAB8A));
-            }
-
-            100% {
-                filter: drop-shadow(0 0 2px var(--button-shadow-inner-light, #6EAB8A));
-            }
-        }
-
-        @keyframes shake {
-
-            0%,
-            100% {
-                transform: translateX(0);
-            }
-
-            25% {
-                transform: translateX(-2px);
-            }
-
-            75% {
-                transform: translateX(2px);
-            }
-        }
-
-        body {
-            margin: 0;
-            padding: 20px;
-            background-color: var(--bg-color, #5C9B72);
-            background-image:
-                var(--bg-pattern, linear-gradient(rgba(92, 155, 114, 0.8), rgba(92, 155, 114, 0.8))),
-                url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAOxAAADsQBlSsOGwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABUSURBVDiNY/z//z8DJYCJgUIwxAxgZGRkuH//PsPFixfB/MOHD4P5jIyMDIyMjAwsyIr+//+PVR82NjaqBqampsYwMDAw/P//n4GRkZFhIA0YmQAAPwMgFW0IgKQAAAAASUVORK5CYII=');
-            background-repeat: repeat;
-            animation: backgroundScroll var(--background-scroll-speed, 20s) linear infinite;
-            font-family: 'Press Start 2P', cursive;
-            color: var(--text-color, #2C4A36);
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 20px auto;
-            background-color: var(--container-bg, #FFF8DC);
-            padding: 20px;
-            border: 4px solid var(--container-border, #2C4A36);
-            image-rendering: pixelated;
-            box-shadow:
-                0 0 0 4px var(--container-bg, #FFF8DC),
-                0 0 0 8px var(--container-border, #2C4A36);
-            animation: fadeIn 0.8s ease;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-            text-shadow: 2px 2px var(--header-shadow, #B8860B);
-            animation: float 3s ease-in-out infinite;
-        }
-
-        h1 {
-            color: var(--text-color, #2C4A36);
-            font-size: 24px;
-        }
-
-        .pixel-box {
-            background: var(--container-bg, #FAEBD7);
-            border: 4px solid var(--container-border, #2C4A36);
-            padding: 15px;
-            margin: 20px 0;
-            position: relative;
-            transition: transform 0.2s ease;
-        }
-
-        .pixel-box:hover {
-            transform: translateY(-2px);
-        }
-
-        .pixel-box::before {
-            content: '';
-            position: absolute;
-            top: -4px;
-            left: -4px;
-            right: -4px;
-            bottom: -4px;
-            border: 2px solid var(--container-bg, #FFF8DC);
-            pointer-events: none;
-        }
-
-        .menu-item {
-            padding: 10px;
-            margin: 10px 0;
-            background: var(--box-bg, #DEB887);
-            border: 3px solid var(--box-border, #2C4A36);
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: center;
-            font-size: 12px;
-        }
-
-        .menu-item:hover {
-            background: var(--button-bg, #D2691E);
-            color: var(--button-text, #FFF8DC);
-            transform: scale(1.02);
-        }
-
-        p {
-            font-size: 12px;
-            line-height: 1.6;
-            margin: 20px 0;
-        }
-
-        .pixel-icon {
-            font-size: 20px;
-            margin-right: 10px;
-        }
-
-        .content-container {
-            padding: 20px;
-            background: var(--container-bg, #FAEBD7);
-            border: 4px solid var(--container-border, #2C4A36);
-            margin-top: 20px;
-            animation: fadeIn 0.5s ease;
-        }
-
-        .content-container.active {
-            display: block;
-        }
-
-        .settings-row {
-            margin: 15px 0;
-            padding: 10px;
-            background: var(--container-bg, #FFF8DC);
-            border: 2px solid var(--container-border, #2C4A36);
-            transition: transform 0.3s ease;
-        }
-
-        .settings-row:hover {
-            transform: translateX(5px);
-        }
-
-        .settings-label {
-            font-size: 10px;
-            color: var(--text-color, #2C4A36);
-            margin-bottom: 5px;
-        }
-
-        .settings-value {
-            font-size: 12px;
-            word-break: break-all;
-            padding: 5px;
-            background: var(--box-bg, #DEB887);
-            border: 2px solid var(--box-border, #2C4A36);
-        }
-
-        .warning-box {
-            background: var(--warning-bg, #FFB6C1);
-            border: 3px solid var(--warning-border, #8B0000);
-            padding: 10px;
-            margin: 10px 0;
-            font-size: 10px;
-            color: var(--warning-text, #8B0000);
-            animation: shake 0.4s ease-in-out;
-        }
-
-        .success-box {
-            background: var(--success-bg, #90EE90);
-            border: 3px solid var(--success-border, #006400);
-            padding: 10px;
-            margin: 10px 0;
-            font-size: 10px;
-            color: var(--success-text, #006400);
-            animation: fadeIn 0.3s ease-out;
-        }
-
-        .mod-actions {
-            display: flex;
-            gap: 5px;
-            margin-top: 5px;
-        }
-
-        .mod-action-button {
-            background: var(--button-bg, #5C9B72);
-            border: 2px solid var(--button-border, #2C4A36);
-            color: var(--button-text, #FFF8DC);
-            padding: 5px 10px;
-            cursor: pointer;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 8px;
-            transition: all 0.1s;
-            position: relative;
-            image-rendering: pixelated;
-            box-shadow:
-                2px 2px 0 var(--button-shadow-outer, #2C4A36),
-                inset -2px -2px 0 var(--button-shadow-inner-dark, #4A7B5C),
-                inset 2px 2px 0 var(--button-shadow-inner-light, #6EAB8A);
-        }
-
-        .mod-action-button:hover {
-            transform: translateY(-1px);
-            filter: brightness(1.1);
-        }
-
-        .mod-action-button:active {
-            transform: translate(2px, 2px);
-            box-shadow:
-                0 0 0 var(--button-shadow-outer, #2C4A36),
-                inset -2px -2px 0 var(--button-shadow-inner-dark, #4A7B5C),
-                inset 2px 2px 0 var(--button-shadow-inner-light, #6EAB8A);
-        }
-
-        .mod-action-button.danger {
-            background: var(--danger-button-bg, #CD5C5C);
-            border-color: var(--danger-button-border, #8B0000);
-            box-shadow:
-                2px 2px 0 var(--danger-button-shadow-outer, #8B0000),
-                inset -2px -2px 0 var(--danger-button-shadow-inner-dark, #B33B3B),
-                inset 2px 2px 0 var(--danger-button-shadow-inner-light, #E77D7D);
-        }
-
-        .mod-action-button.danger:hover {
-            animation: shake 0.3s ease-in-out;
-        }
-
-        .mod-action-button.danger:active {
-            box-shadow:
-                0 0 0 var(--danger-button-shadow-outer, #8B0000),
-                inset -2px -2px 0 var(--danger-button-shadow-inner-dark, #B33B3B),
-                inset 2px 2px 0 var(--danger-button-shadow-inner-light, #E77D7D);
-        }
-
-        .mod-list {
-            margin-top: 20px;
-        }
-
-        .mod-category {
-            margin: 15px 0;
-        }
-
-        .mod-category-title {
-            font-size: 14px;
-            color: var(--category-text, #2C4A36);
-            margin-bottom: 10px;
-            text-shadow: 1px 1px var(--category-shadow, #B8860B);
-        }
-
-        .mod-item {
-            background: var(--box-bg, #DEB887);
-            border: 2px solid var(--box-border, #2C4A36);
-            padding: 10px;
-            margin: 5px 0;
-            font-size: 10px;
-            transition: all 0.2s ease;
-            animation: fadeIn 0.3s ease-out;
-        }
-
-        .mod-item:hover {
-            transform: translateX(3px);
-            box-shadow: -3px 0 0 var(--box-border, #2C4A36);
-        }
-
-        .mod-item.invalid {
-            background: var(--warning-bg, #FFB6C1);
-            border-color: var(--warning-border, #8B0000);
-        }
-
-        .mod-item.invalid:hover {
-            animation: shake 0.5s ease-in-out;
-        }
-
-        .mod-item-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 5px;
-        }
-
-        .mod-item-title {
-            font-weight: bold;
-        }
-
-        .mod-item-version {
-            color: var(--text-color, #2C4A36);
-        }
-
-        .mod-item-author {
-            font-style: italic;
-            margin: 5px 0;
-        }
-
-        .mod-item-description {
-            font-size: 8px;
-            line-height: 1.4;
-            margin-top: 5px;
-            padding: 5px;
-            background: var(--inner-box-bg, rgba(255, 255, 255, 0.3));
-            transition: background-color 0.3s ease;
-        }
-
-        .mod-item:hover .mod-item-description {
-            background: var(--inner-box-bg, rgba(255, 255, 255, 0.5));
-        }
-
-        .refresh-button {
-            background: var(--button-bg, #5C9B72);
-            border: 3px solid var(--button-border, #2C4A36);
-            color: var(--button-text, #FFF8DC);
-            padding: 10px 20px;
-            cursor: pointer;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 10px;
-            margin: 10px 0;
-            transition: all 0.1s;
-            position: relative;
-            image-rendering: pixelated;
-            box-shadow:
-                3px 3px 0 var(--button-shadow-outer, #2C4A36),
-                inset -3px -3px 0 var(--button-shadow-inner-dark, #4A7B5C),
-                inset 3px 3px 0 var(--button-shadow-inner-light, #6EAB8A);
-        }
-
-        .refresh-button:hover {
-            animation: pulse 2s infinite;
-        }
-
-        .refresh-button:active {
-            transform: translate(3px, 3px);
-            box-shadow:
-                0 0 0 var(--button-shadow-outer, #2C4A36),
-                inset -3px -3px 0 var(--button-shadow-inner-dark, #4A7B5C),
-                inset 3px 3px 0 var(--button-shadow-inner-light, #6EAB8A);
-        }
-
-        .loading {
-            text-align: center;
-            padding: 20px;
-            font-size: 12px;
-            color: var(--text-color, #2C4A36);
-            animation: float 1s infinite;
-        }
-
-        .game-path-container {
-            background: linear-gradient(to right, var(--game-path-bg-start, #d4a76a), var(--game-path-bg-end, #c39355));
-            padding: 15px;
-            border-radius: 5px;
-            margin: 10px 0;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            border: 2px solid var(--game-path-border, #a67c4a);
-            transition: transform 0.3s ease;
-        }
-
-        .game-path-container:hover {
-            transform: scale(1.01);
-        }
-
-        .game-path-label {
-            font-size: 12px;
-            margin-bottom: 5px;
-            color: var(--game-path-label, #5a3921);
-            font-weight: bold;
-        }
-
-        #game-path {
-            font-size: 10px;
-            color: var(--game-path-text, #4a2e1a);
-            word-break: break-all;
-        }
-
-        /* Yardım menüsü stillerini kaldır */
-        .help-menu,
-        .help-menu-title,
-        .help-menu-links,
-        .help-menu-link,
-        .help-menu-link:hover,
-        .help-menu-link img {
-            display: none;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .action-button {
-            background: var(--button-bg, #5C9B72);
-            border: 3px solid var(--button-border, #2C4A36);
-            color: var(--button-text, #FFF8DC);
-            padding: 10px 20px;
-            cursor: pointer;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 10px;
-            transition: all 0.2s;
-            position: relative;
-            image-rendering: pixelated;
-            box-shadow:
-                3px 3px 0 var(--button-shadow-outer, #2C4A36),
-                inset -3px -3px 0 var(--button-shadow-inner-dark, #4A7B5C),
-                inset 3px 3px 0 var(--button-shadow-inner-light, #6EAB8A);
-        }
-
-        .action-button:hover {
-            transform: translateY(-3px);
-            filter: brightness(1.1);
-        }
-
-        .action-button:active {
-            transform: translate(3px, 3px);
-            box-shadow:
-                0 0 0 var(--button-shadow-outer, #2C4A36),
-                inset -3px -3px 0 var(--button-shadow-inner-dark, #4A7B5C),
-                inset 3px 3px 0 var(--button-shadow-inner-light, #6EAB8A);
-        }
-
-        .action-button.play {
-            background: var(--play-button-bg, #D2691E);
-            border-color: var(--play-button-border, #8B4513);
-            box-shadow:
-                3px 3px 0 var(--play-button-shadow-outer, #8B4513),
-                inset -3px -3px 0 var(--play-button-shadow-inner-dark, #B35B2B),
-                inset 3px 3px 0 var(--play-button-shadow-inner-light, #E97D3D);
-            animation: pulse 3s infinite, glow 4s infinite;
-        }
-
-        .action-button.play:hover {
-            animation: none;
-            transform: scale(1.05) translateY(-2px);
-        }
-
-        .action-button.play:active {
-            box-shadow:
-                0 0 0 var(--play-button-shadow-outer, #8B4513),
-                inset -3px -3px 0 var(--play-button-shadow-inner-dark, #B35B2B),
-                inset 3px 3px 0 var(--play-button-shadow-inner-light, #E97D3D);
-            transform: translate(3px, 3px);
-        }
-
-        .action-button:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow:
-                3px 3px 0 var(--button-shadow-outer, #2C4A36),
-                inset -3px -3px 0 var(--button-shadow-inner-dark, #4A7B5C),
-                inset 3px 3px 0 var(--button-shadow-inner-light, #6EAB8A);
-            animation: none;
-        }
-
-        /* Toast animasyonu ve stili */
-        .toast {
-            animation: fadeIn 0.3s ease-out;
-        }
-
-        .toast.show {
-            animation: fadeIn 0.3s ease-out, glow 2s infinite;
-        }
-    </style>
-</head>
-
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>🌾 Stardew Valley Mod Yöneticisi 🌾</h1>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="/src/styles.css" />
+    <link rel="icon" type="image/x-icon" href="/icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stardew Valley Mod Manager</title>
+    <script type="module" src="/src/main.ts" defer></script>
+  </head>
+
+  <body data-theme="default" class="app-container">
+    <!-- Left Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="game-status-indicator">
+          <div id="smapi-indicator" class="status-dot"></div>
+          <div class="game-info">
+            <div class="game-version" id="game-version">SMAPI</div>
+            <div class="game-path-short" id="game-path-short">Detecting...</div>
+          </div>
         </div>
+      </div>
 
-        <div id="smapi-status"></div>
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-section="dashboard">
+          <span class="nav-icon">🏠</span>
+          <span class="nav-text" data-i18n="navigation.dashboard">Dashboard</span>
+        </button>
+        <button class="nav-item" data-section="mods">
+          <span class="nav-icon">📦</span>
+          <span class="nav-text" data-i18n="navigation.mods">Mods</span>
+        </button>
+        <button class="nav-item" data-section="profiles">
+          <span class="nav-icon">👤</span>
+          <span class="nav-text" data-i18n="navigation.profiles">Profiles</span>
+        </button>
+        <button class="nav-item" data-section="conflicts">
+          <span class="nav-icon">⚠️</span>
+          <span class="nav-text" data-i18n="navigation.conflicts">Conflicts</span>
+        </button>
+        <button class="nav-item" data-section="settings">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-text" data-i18n="navigation.settings">Settings</span>
+        </button>
+        <button class="nav-item" data-section="about">
+          <span class="nav-icon">ℹ️</span>
+          <span class="nav-text" data-i18n="navigation.about">About</span>
+        </button>
+      </nav>
+    </aside>
 
-        <div class="game-path-container">
-            <div class="game-path-label">Stardew Valley Konumu:</div>
-            <div id="game-path">Aranıyor...</div>
+    <!-- Main Content Area -->
+    <main class="main-content">
+      
+      <!-- Dashboard Section -->
+      <section id="dashboard" class="content-section active">
+        <div class="section-header">
+          <h1 class="section-title pixel-text" data-i18n="dashboard.title">Dashboard</h1>
         </div>
-
-        <div id="mods" class="content-container active">
-            <button id="refresh-mods" class="refresh-button">🔄 Yenile</button>
-            <div class="mod-list">
-                <div id="active-mods" class="mod-category">
-                    <div class="mod-category-title">Aktif Modlar</div>
-                </div>
-                <div id="deactivated-mods" class="mod-category">
-                    <div class="mod-category-title">Deaktif Modlar</div>
-                </div>
-                <div id="invalid-mods" class="mod-category">
-                    <div class="mod-category-title">Hatalı Modlar</div>
-                </div>
+        
+        <div class="dashboard-grid">
+          <!-- Game Launch Panel -->
+          <div class="panel launch-panel">
+            <h2 class="panel-title" data-i18n="dashboard.play_button">Launch Game</h2>
+            <div class="launch-buttons">
+              <button id="play-game" class="btn btn-primary btn-large play-button">
+                <span class="btn-icon">🎮</span>
+                <span data-i18n="dashboard.play_button">Play Game</span>
+              </button>
+              <button id="play-vanilla" class="btn btn-secondary">
+                <span data-i18n="dashboard.play_vanilla">Play Vanilla</span>
+              </button>
             </div>
+          </div>
+
+          <!-- Quick Stats -->
+          <div class="panel stats-panel">
+            <h2 class="panel-title" data-i18n="dashboard.game_status">Game Status</h2>
+            <div class="stats-grid">
+              <div class="stat-item">
+                <div class="stat-value" id="mod-count">0</div>
+                <div class="stat-label" data-i18n="dashboard.mod_count">Active Mods</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-value" id="conflict-count">0</div>
+                <div class="stat-label" data-i18n="conflicts.title">Conflicts</div>
+              </div>
+            </div>
+            <div id="smapi-status" class="status-indicator"></div>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="panel actions-panel">
+            <h2 class="panel-title" data-i18n="dashboard.quick_actions">Quick Actions</h2>
+            <div class="action-buttons-grid">
+              <button class="btn btn-ghost" onclick="openFolder('mods')">
+                <span class="btn-icon">📁</span>
+                <span data-i18n="game.openModsFolder">Open Mods Folder</span>
+              </button>
+              <button class="btn btn-ghost" id="refresh-all">
+                <span class="btn-icon">🔄</span>
+                <span data-i18n="mods.refresh">Refresh</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Recent Changes -->
+          <div class="panel recent-panel">
+            <h2 class="panel-title" data-i18n="dashboard.recent_changes">Recent Changes</h2>
+            <div id="recent-changes" class="recent-list">
+              <div class="empty-state">
+                <span class="empty-icon">📄</span>
+                <p>No recent changes</p>
+              </div>
+            </div>
+          </div>
         </div>
-    </div>
+      </section>
 
-    <script src="renderer.js"></script>
-</body>
+      <!-- Mods Section -->
+      <section id="mods" class="content-section">
+        <div class="section-header">
+          <h1 class="section-title pixel-text" data-i18n="navigation.mods">Mods</h1>
+          
+          <!-- Mod Filters -->
+          <div class="filter-controls">
+            <div class="segmented-control">
+              <button class="segment active" data-filter="all" data-i18n="filters.all">All</button>
+              <button class="segment" data-filter="enabled" data-i18n="filters.enabled">Enabled</button>
+              <button class="segment" data-filter="disabled" data-i18n="filters.disabled">Disabled</button>
+              <button class="segment" data-filter="conflicts" data-i18n="filters.with_conflicts">With Conflicts</button>
+            </div>
+            <button id="refresh-mods" class="btn btn-secondary">
+              <span class="btn-icon">🔄</span>
+              <span data-i18n="mods.refresh">Refresh</span>
+            </button>
+          </div>
+        </div>
+        
+        <div class="mod-list-container">
+          <div id="active-mods" class="mod-category">
+            <div class="mod-category-header">
+              <h3 class="mod-category-title" data-i18n="mods.activeMods">Active Mods</h3>
+              <span class="mod-count">0</span>
+            </div>
+            <div class="mod-items"></div>
+          </div>
+          
+          <div id="deactivated-mods" class="mod-category">
+            <div class="mod-category-header">
+              <h3 class="mod-category-title" data-i18n="mods.deactivatedMods">Deactivated Mods</h3>
+              <span class="mod-count">0</span>
+            </div>
+            <div class="mod-items"></div>
+          </div>
+          
+          <div id="invalid-mods" class="mod-category">
+            <div class="mod-category-header">
+              <h3 class="mod-category-title" data-i18n="mods.invalidMods">Invalid Mods</h3>
+              <span class="mod-count">0</span>
+            </div>
+            <div class="mod-items"></div>
+          </div>
+        </div>
+      </section>
 
+      <!-- Profiles Section (Mockup) -->
+      <section id="profiles" class="content-section">
+        <div class="section-header">
+          <h1 class="section-title pixel-text" data-i18n="profiles.title">Profiles</h1>
+          <button class="btn btn-primary">
+            <span class="btn-icon">➕</span>
+            <span data-i18n="profiles.create_new">Create New Profile</span>
+          </button>
+        </div>
+        
+        <div class="profiles-grid">
+          <div class="profile-card active">
+            <div class="profile-header">
+              <h3 class="profile-name">Default Profile</h3>
+              <span class="profile-badge active-badge">ACTIVE</span>
+            </div>
+            <p class="profile-description">Main mod collection for farming and aesthetics</p>
+            <div class="profile-stats">
+              <span class="mod-count">24 mods</span>
+              <span class="last-used">Last used: Today</span>
+            </div>
+            <div class="profile-actions">
+              <button class="btn btn-ghost" disabled data-i18n="profiles.set_active">Set Active</button>
+              <button class="btn btn-secondary" data-i18n="profiles.duplicate">Duplicate</button>
+            </div>
+          </div>
+
+          <div class="profile-card">
+            <div class="profile-header">
+              <h3 class="profile-name">Expansion Pack</h3>
+            </div>
+            <p class="profile-description">Ridgeside Village and other content expansions</p>
+            <div class="profile-stats">
+              <span class="mod-count">18 mods</span>
+              <span class="last-used">Last used: 3 days ago</span>
+            </div>
+            <div class="profile-actions">
+              <button class="btn btn-primary" data-i18n="profiles.set_active">Set Active</button>
+              <button class="btn btn-ghost" data-i18n="profiles.duplicate">Duplicate</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Conflicts Section -->
+      <section id="conflicts" class="content-section">
+        <div class="section-header">
+          <h1 class="section-title pixel-text" data-i18n="conflicts.title">Conflicts</h1>
+          <button class="btn btn-primary" id="auto-resolve-all">
+            <span class="btn-icon">🔧</span>
+            <span data-i18n="conflicts.auto_resolve">Auto-resolve</span>
+          </button>
+        </div>
+        
+        <div class="conflicts-container">
+          <div class="empty-state">
+            <span class="empty-icon">✅</span>
+            <h3 data-i18n="conflicts.no_conflicts">No conflicts detected</h3>
+            <p>All your mods are compatible!</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Settings Section -->
+      <section id="settings" class="content-section">
+        <div class="section-header">
+          <h1 class="section-title pixel-text" data-i18n="settings.title">Settings</h1>
+        </div>
+        
+        <div class="settings-grid">
+          <div class="settings-group">
+            <h3 class="settings-group-title" data-i18n="settings.game_paths">Game Paths</h3>
+            <div class="setting-item">
+              <label class="setting-label" data-i18n="game.location">Game Location</label>
+              <div class="path-input-group">
+                <input type="text" id="game-path" class="path-input" readonly>
+                <button class="btn btn-secondary" id="browse-game-path">Browse</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-group">
+            <h3 class="settings-group-title" data-i18n="themes.title">Appearance</h3>
+            <div class="setting-item">
+              <label class="setting-label" data-i18n="settings.theme">Theme</label>
+              <div class="theme-selector">
+                <button class="theme-option active" data-theme="default">
+                  <div class="theme-preview default"></div>
+                  <span data-i18n="themes.default">Default</span>
+                </button>
+                <button class="theme-option" data-theme="dark">
+                  <div class="theme-preview dark"></div>
+                  <span data-i18n="themes.dark">Dark</span>
+                </button>
+                <button class="theme-option" data-theme="minecraft">
+                  <div class="theme-preview minecraft"></div>
+                  <span data-i18n="themes.minecraft">Minecraft</span>
+                </button>
+                <button class="theme-option" data-theme="barbie">
+                  <div class="theme-preview barbie"></div>
+                  <span data-i18n="themes.barbie">Barbie</span>
+                </button>
+              </div>
+            </div>
+            
+            <div class="setting-item">
+              <label class="setting-label" data-i18n="settings.language">Language</label>
+              <select id="language-select" class="select-input">
+                <option value="en">English</option>
+                <option value="tr">Türkçe</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- About Section -->
+      <section id="about" class="content-section">
+        <div class="section-header">
+          <h1 class="section-title pixel-text" data-i18n="about.title">About</h1>
+        </div>
+        
+        <div class="about-content">
+          <div class="about-grid">
+            <!-- Project Info Panel -->
+            <div class="panel about-project-panel">
+              <h2 class="panel-title" data-i18n="about.project_title">Stardew Valley Mod Manager</h2>
+              <div class="about-logo">
+                <img src="src-tauri/icons/128x128.png" alt="Stardew Valley Mod Manager" class="about-icon">
+              </div>
+              <p class="about-description" data-i18n="about.description">
+                A modern, pixel-art styled desktop application for managing Stardew Valley SMAPI mods. Built with Tauri for enhanced security and performance.
+              </p>
+              
+              <div class="about-badges">
+                <span class="badge badge-open-source" data-i18n="about.open_source">Open Source</span>
+                <span class="badge badge-tauri">Tauri 2.8.4</span>
+                <span class="badge badge-rust">Rust + TypeScript</span>
+              </div>
+              
+              <div class="about-links">
+                <a href="https://github.com/merchizm/stardew-valley-mod-manager" class="btn btn-primary btn-github" target="_blank">
+                  <span class="btn-icon">🔗</span>
+                  <span data-i18n="about.github_repo">GitHub Repository</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Developer Panel -->
+            <div class="panel about-developer-panel">
+              <h2 class="panel-title" data-i18n="about.developer_title">Developer</h2>
+              <div class="developer-info">
+                <div class="developer-avatar">
+                  <img src="src-tauri/icons/128x128.png" alt="Developer Avatar" class="developer-icon">
+                </div>
+                <div class="developer-details">
+                  <h3 class="developer-name">merchizm</h3>
+                  <p class="developer-bio" data-i18n="about.developer_bio">
+                    Software developer passionate about creating tools that enhance gaming experiences.
+                  </p>
+                  <div class="developer-links">
+                    <a href="https://github.com/merchizm" class="btn btn-ghost" target="_blank">
+                      <span class="btn-icon">🐱</span>
+                      <span>GitHub</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Technical Details Panel -->
+            <div class="panel about-tech-panel">
+              <h2 class="panel-title" data-i18n="about.tech_title">Technical Details</h2>
+              <div class="tech-details">
+                <div class="tech-stack">
+                  <div class="tech-category">
+                    <h4 class="tech-category-title" data-i18n="about.frontend">Frontend</h4>
+                    <ul class="tech-list">
+                      <li>TypeScript</li>
+                      <li>Vite</li>
+                      <li>CSS3 with Pixel Art Styling</li>
+                      <li>HTML5</li>
+                    </ul>
+                  </div>
+                  <div class="tech-category">
+                    <h4 class="tech-category-title" data-i18n="about.backend">Backend</h4>
+                    <ul class="tech-list">
+                      <li>Rust</li>
+                      <li>Tauri 2.8.4</li>
+                      <li>Serde for JSON handling</li>
+                      <li>Tokio for async operations</li>
+                    </ul>
+                  </div>
+                  <div class="tech-category">
+                    <h4 class="tech-category-title" data-i18n="about.features">Key Features</h4>
+                    <ul class="tech-list">
+                      <li data-i18n="about.feature_cross_platform">Cross-platform support</li>
+                      <li data-i18n="about.feature_security">Enhanced security model</li>
+                      <li data-i18n="about.feature_performance">Lower resource usage</li>
+                      <li data-i18n="about.feature_multilang">Multi-language support</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- License Panel -->
+            <div class="panel about-license-panel">
+              <h2 class="panel-title" data-i18n="about.license_title">License & Credits</h2>
+              <div class="license-info">
+                <p data-i18n="about.license_text">
+                  This project is open source and available under the MIT License. Feel free to contribute, report issues, or fork the project.
+                </p>
+                <div class="credits">
+                  <h4 data-i18n="about.credits_title">Credits</h4>
+                  <ul class="credits-list">
+                    <li data-i18n="about.credit_stardew">Stardew Valley by ConcernedApe</li>
+                    <li data-i18n="about.credit_smapi">SMAPI by Pathoschild</li>
+                    <li data-i18n="about.credit_tauri">Tauri Framework</li>
+                    <li data-i18n="about.credit_community">Stardew Valley Modding Community</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Mod Details Drawer (Hidden by default) -->
+    <aside id="mod-drawer" class="mod-drawer">
+      <div class="drawer-header">
+        <h2 class="drawer-title" id="drawer-mod-name">Mod Name</h2>
+        <button class="btn btn-ghost btn-small" id="close-drawer">✕</button>
+      </div>
+      
+      <div class="drawer-tabs">
+        <button class="tab-btn active" data-tab="overview">Overview</button>
+        <button class="tab-btn" data-tab="requirements">Requirements</button>
+        <button class="tab-btn" data-tab="changelog">Changelog</button>
+        <button class="tab-btn" data-tab="files">Files</button>
+      </div>
+      
+      <div class="drawer-content">
+        <div id="tab-overview" class="tab-content active">
+          <div class="mod-details-overview"></div>
+        </div>
+        <div id="tab-requirements" class="tab-content">
+          <div class="mod-requirements"></div>
+        </div>
+        <div id="tab-changelog" class="tab-content">
+          <div class="mod-changelog"></div>
+        </div>
+        <div id="tab-files" class="tab-content">
+          <div class="mod-files"></div>
+        </div>
+      </div>
+    </aside>
+  </body>
 </html>

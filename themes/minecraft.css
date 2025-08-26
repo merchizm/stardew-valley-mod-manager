@@ -1,59 +1,98 @@
 :root {
-    /* Ana Renkler */
-    --bg-color: #7D6B5D;
-    --bg-pattern: linear-gradient(rgba(125, 107, 93, 0.8), rgba(125, 107, 93, 0.8));
-    --container-bg: #BDAE96;
-    --container-border: #4D4D4D;
-    --text-color: #3F3F3F;
-    --header-shadow: #6E6154;
+    /* Theme Identity */
+    --theme-name: 'minecraft';
+    
+    /* Minecraft Theme - Stone, Grass & Earth Palette */
+    --c-primary: #7CBD7B; /* Grass green - primary surfaces */
+    --c-secondary: #8B4513; /* Dirt brown */
+    --c-tertiary: #A0522D; /* Lighter dirt brown */
+    --c-accent: #00FFFF; /* Diamond cyan */
+    --c-accent-light: #80E0FF; /* Light diamond cyan */
+    --c-surface: #7F7F7F; /* Stone gray */
+    --c-border: #3C2415; /* Dark oak */
+    --c-text: #FFFFFF; /* White text for contrast */
+    --c-text-light: #E0E0E0; /* Light gray text */
+    --c-success: #059669; /* Emerald green */
+    --c-error: #DC2626; /* Redstone red */
+    --c-info: #1E40AF; /* Lapis blue */
+    --c-warning: #F59E0B; /* Gold/Warning amber */
+    
+    /* Semantic Colors */
+    --bg-color: #2F5233;
+    --bg-pattern: linear-gradient(rgba(47, 82, 51, 0.8), rgba(47, 82, 51, 0.8));
+    --container-bg: var(--c-surface);
+    --container-border: var(--c-border);
+    --text-color: var(--c-text);
+    --header-shadow: #A0522D;
+    
+    /* Border & Shadow System */
+    --radius: 0px; /* Minecraft blockiness */
+    --shadow-themed: 
+        0 0 0 2px var(--c-secondary),
+        0 0 0 4px var(--c-tertiary),
+        0 0 0 6px var(--c-border),
+        0 0 0 8px rgba(60, 36, 21, 0.6),
+        0 0 0 10px rgba(60, 36, 21, 0.3);
 
-    /* Buton Renkleri */
-    --button-bg: #556D35;
-    --button-border: #3A501F;
-    --button-text: #DEDDD6;
-    --button-shadow-outer: #28370F;
-    --button-shadow-inner-dark: #42552A;
-    --button-shadow-inner-light: #678540;
+    /* Button System */
+    --button-bg: var(--c-primary);
+    --button-border: var(--c-border);
+    --button-text: var(--c-text);
+    --button-shadow-outer: var(--c-border);
+    --button-shadow-inner-dark: #6AAD6A;
+    --button-shadow-inner-light: #8CCD8C;
 
-    /* Tehlike Butonları */
-    --danger-button-bg: #AF3A3A;
-    --danger-button-border: #822D2D;
-    --danger-button-shadow-outer: #822D2D;
-    --danger-button-shadow-inner-dark: #9C3030;
-    --danger-button-shadow-inner-light: #C25151;
+    /* Danger Buttons */
+    --danger-button-bg: var(--c-error);
+    --danger-button-border: #991B1B;
+    --danger-button-shadow-outer: #991B1B;
+    --danger-button-shadow-inner-dark: #B91C1C;
+    --danger-button-shadow-inner-light: #EF4444;
 
-    /* Oynat Butonu */
-    --play-button-bg: #7A9958;
-    --play-button-border: #4B692F;
-    --play-button-shadow-outer: #4B692F;
-    --play-button-shadow-inner-dark: #617A46;
-    --play-button-shadow-inner-light: #93B869;
+    /* Play Button */
+    --play-button-bg: var(--c-info);
+    --play-button-border: #1E3A8A;
+    --play-button-shadow-outer: #1E3A8A;
+    --play-button-shadow-inner-dark: #1D4ED8;
+    --play-button-shadow-inner-light: #3B82F6;
 
-    /* Kutu Renkleri */
-    --box-bg: #A0A096;
-    --box-border: #3F3F3F;
-    --inner-box-bg: rgba(190, 190, 176, 0.5);
+    /* Panel/Card Colors */
+    --box-bg: var(--c-primary);
+    --box-border: var(--c-border);
+    --inner-box-bg: rgba(0, 0, 0, 0.2);
 
-    /* Uyarı Kutuları */
-    --warning-bg: #D87373;
-    --warning-border: #9E2929;
-    --warning-text: #5A1313;
-    --success-bg: #8BD88B;
-    --success-border: #299E29;
-    --success-text: #135A13;
+    /* State Colors */
+    --warning-bg: #451A03;
+    --warning-border: var(--c-warning);
+    --warning-text: #FBBF24;
+    --success-bg: #052E16;
+    --success-border: var(--c-success);
+    --success-text: var(--c-success);
+    --info-bg: #1E3A8A;
+    --info-border: var(--c-info);
+    --info-text: #93C5FD;
 
-    /* Kategori Renkleri */
-    --category-text: #3F3F3F;
-    --category-shadow: #6E6154;
+    /* Category & Navigation */
+    --category-text: var(--c-text);
+    --category-shadow: var(--c-secondary);
+    
+    /* Sidebar */
+    --sidebar-bg: var(--c-surface);
+    --sidebar-border: var(--c-border);
+    --sidebar-item-hover: var(--c-primary);
+    --sidebar-item-active: var(--c-accent);
 
-    /* Oyun Yolu Konteyner */
-    --game-path-bg-start: #B19F86;
-    --game-path-bg-end: #A69578;
-    --game-path-border: #7F6D5A;
-    --game-path-label: #3F3F3F;
-    --game-path-text: #222222;
+    /* Game Path Container */
+    --game-path-bg-start: var(--c-secondary);
+    --game-path-bg-end: var(--c-tertiary);
+    --game-path-border: var(--c-border);
+    --game-path-label: var(--c-text-light);
+    --game-path-text: var(--c-text);
 
-    /* Animasyonlar */
+    /* Animations */
     --float-animation-distance: -5px;
     --background-scroll-speed: 25s;
+    --transition-fast: 160ms cubic-bezier(0.22, 0.68, 0, 1);
+    --transition-medium: 220ms cubic-bezier(0.22, 0.68, 0, 1);
+    --transition-slow: 320ms cubic-bezier(0.22, 0.68, 0, 1);
 }

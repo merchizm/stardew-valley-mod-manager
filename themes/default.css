@@ -1,59 +1,98 @@
 :root {
-    /* Ana Renkler */
+    /* Theme Identity */
+    --theme-name: 'default';
+    
+    /* Stardew Valley Default Theme - Wheat & Wood Palette */
+    --c-primary: #FFC677; /* Warm honey - primary surfaces */
+    --c-secondary: #DA9457; /* Orange wood */
+    --c-tertiary: #A84A07; /* Deep orange wood */
+    --c-accent: #2F6F44; /* Forest green accents */
+    --c-accent-light: #7FB07F; /* Light forest green */
+    --c-surface: #F7E1C3; /* Wheat / parchment */
+    --c-border: #5B2B29; /* Deep wood/border */
+    --c-text: #2D2D2D; /* Dark text for readability */
+    --c-text-light: #5B2B29; /* Lighter text variant */
+    --c-success: #4F8A4F; /* Success fern */
+    --c-error: #A33A3A; /* Error cranberry */
+    --c-info: #87B9E0; /* Sky blue info */
+    --c-warning: #DA9457; /* Warning orange */
+    
+    /* Semantic Colors */
     --bg-color: #5C9B72;
     --bg-pattern: linear-gradient(rgba(92, 155, 114, 0.8), rgba(92, 155, 114, 0.8));
-    --container-bg: #FFF8DC;
-    --container-border: #2C4A36;
-    --text-color: #2C4A36;
+    --container-bg: var(--c-surface);
+    --container-border: var(--c-border);
+    --text-color: var(--c-text);
     --header-shadow: #B8860B;
+    
+    /* Border & Shadow System */
+    --radius: 6px;
+    --shadow-themed: 
+        0 0 0 2px var(--c-secondary),
+        0 0 0 4px var(--c-tertiary),
+        0 0 0 6px var(--c-border),
+        0 0 0 8px rgba(91, 43, 41, 0.6),
+        0 0 0 10px rgba(91, 43, 41, 0.3);
 
-    /* Buton Renkleri */
-    --button-bg: #5C9B72;
-    --button-border: #2C4A36;
-    --button-text: #FFF8DC;
-    --button-shadow-outer: #2C4A36;
-    --button-shadow-inner-dark: #4A7B5C;
-    --button-shadow-inner-light: #6EAB8A;
+    /* Button System */
+    --button-bg: var(--c-accent);
+    --button-border: var(--c-border);
+    --button-text: var(--c-surface);
+    --button-shadow-outer: var(--c-border);
+    --button-shadow-inner-dark: #256639;
+    --button-shadow-inner-light: var(--c-accent-light);
 
-    /* Tehlike Butonları */
-    --danger-button-bg: #CD5C5C;
+    /* Danger Buttons */
+    --danger-button-bg: var(--c-error);
     --danger-button-border: #8B0000;
     --danger-button-shadow-outer: #8B0000;
-    --danger-button-shadow-inner-dark: #B33B3B;
-    --danger-button-shadow-inner-light: #E77D7D;
+    --danger-button-shadow-inner-dark: #872D2D;
+    --danger-button-shadow-inner-light: #B8494A;
 
-    /* Oynat Butonu */
+    /* Play Button */
     --play-button-bg: #D2691E;
     --play-button-border: #8B4513;
     --play-button-shadow-outer: #8B4513;
     --play-button-shadow-inner-dark: #B35B2B;
     --play-button-shadow-inner-light: #E97D3D;
 
-    /* Kutu Renkleri */
-    --box-bg: #DEB887;
-    --box-border: #2C4A36;
-    --inner-box-bg: rgba(255, 255, 255, 0.3);
+    /* Panel/Card Colors */
+    --box-bg: var(--c-primary);
+    --box-border: var(--c-border);
+    --inner-box-bg: rgba(255, 255, 255, 0.2);
 
-    /* Uyarı Kutuları */
-    --warning-bg: #FFB6C1;
-    --warning-border: #8B0000;
-    --warning-text: #8B0000;
-    --success-bg: #90EE90;
-    --success-border: #006400;
-    --success-text: #006400;
+    /* State Colors */
+    --warning-bg: #FFE4B5;
+    --warning-border: var(--c-warning);
+    --warning-text: var(--c-error);
+    --success-bg: #E6F3E6;
+    --success-border: var(--c-success);
+    --success-text: var(--c-success);
+    --info-bg: #E6F2FF;
+    --info-border: var(--c-info);
+    --info-text: #2E5C8A;
 
-    /* Kategori Renkleri */
-    --category-text: #2C4A36;
+    /* Category & Navigation */
+    --category-text: var(--c-text);
     --category-shadow: #B8860B;
+    
+    /* Sidebar */
+    --sidebar-bg: var(--c-surface);
+    --sidebar-border: var(--c-border);
+    --sidebar-item-hover: var(--c-primary);
+    --sidebar-item-active: var(--c-accent);
 
-    /* Oyun Yolu Konteyner */
+    /* Game Path Container */
     --game-path-bg-start: #d4a76a;
     --game-path-bg-end: #c39355;
     --game-path-border: #a67c4a;
     --game-path-label: #5a3921;
     --game-path-text: #4a2e1a;
 
-    /* Animasyonlar */
+    /* Animations */
     --float-animation-distance: -10px;
     --background-scroll-speed: 20s;
+    --transition-fast: 160ms cubic-bezier(0.22, 0.68, 0, 1);
+    --transition-medium: 220ms cubic-bezier(0.22, 0.68, 0, 1);
+    --transition-slow: 320ms cubic-bezier(0.22, 0.68, 0, 1);
 }

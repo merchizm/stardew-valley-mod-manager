@@ -1,59 +1,98 @@
 :root {
-    /* Ana Renkler */
-    --bg-color: #FF69B4;
-    --bg-pattern: linear-gradient(rgba(255, 105, 180, 0.8), rgba(255, 105, 180, 0.8));
-    --container-bg: #FFF0F5;
-    --container-border: #FF1493;
-    --text-color: #DB7093;
-    --header-shadow: #C71585;
+    /* Theme Identity */
+    --theme-name: 'barbie';
+    
+    /* Barbie Theme - Pink & Purple Palette */
+    --c-primary: #E91E63; /* Hot pink - primary surfaces */
+    --c-secondary: #C2185B; /* Deep magenta */
+    --c-tertiary: #AD1457; /* Darker magenta */
+    --c-accent: #9C27B0; /* Lavender accents */
+    --c-accent-light: #BA68C8; /* Light lavender */
+    --c-surface: #FFC0CB; /* Soft pink */
+    --c-border: #7B1FA2; /* Purple borders */
+    --c-text: #4A148C; /* Dark purple text */
+    --c-text-light: #8E24AA; /* Medium purple text */
+    --c-success: #4CAF50; /* Mint green */
+    --c-error: #E91E63; /* Rose red (matches primary) */
+    --c-info: #03A9F4; /* Sky blue */
+    --c-warning: #FF6F00; /* Vibrant orange */
+    
+    /* Semantic Colors */
+    --bg-color: #F8BBD9;
+    --bg-pattern: linear-gradient(rgba(248, 187, 217, 0.9), rgba(248, 187, 217, 0.9));
+    --container-bg: var(--c-surface);
+    --container-border: var(--c-border);
+    --text-color: var(--c-text);
+    --header-shadow: #C2185B;
+    
+    /* Border & Shadow System */
+    --radius: 12px; /* Softer, more rounded */
+    --shadow-themed: 
+        0 0 0 2px var(--c-secondary),
+        0 0 0 4px var(--c-tertiary),
+        0 0 0 6px var(--c-border),
+        0 0 0 8px rgba(123, 31, 162, 0.6),
+        0 0 0 10px rgba(123, 31, 162, 0.3);
 
-    /* Buton Renkleri */
-    --button-bg: #FF69B4;
-    --button-border: #FF1493;
+    /* Button System */
+    --button-bg: var(--c-primary);
+    --button-border: var(--c-border);
     --button-text: #FFFFFF;
-    --button-shadow-outer: #C71585;
-    --button-shadow-inner-dark: #DB7093;
-    --button-shadow-inner-light: #FFC0CB;
+    --button-shadow-outer: var(--c-border);
+    --button-shadow-inner-dark: #C2185B;
+    --button-shadow-inner-light: #F06292;
 
-    /* Tehlike Butonları */
-    --danger-button-bg: #C71585;
-    --danger-button-border: #8B008B;
-    --danger-button-shadow-outer: #8B008B;
-    --danger-button-shadow-inner-dark: #9932CC;
-    --danger-button-shadow-inner-light: #D8BFD8;
+    /* Danger Buttons */
+    --danger-button-bg: var(--c-error);
+    --danger-button-border: #AD1457;
+    --danger-button-shadow-outer: #AD1457;
+    --danger-button-shadow-inner-dark: #C2185B;
+    --danger-button-shadow-inner-light: #F06292;
 
-    /* Oynat Butonu */
-    --play-button-bg: #FF1493;
-    --play-button-border: #C71585;
-    --play-button-shadow-outer: #C71585;
-    --play-button-shadow-inner-dark: #DB7093;
-    --play-button-shadow-inner-light: #FFB6C1;
+    /* Play Button */
+    --play-button-bg: var(--c-accent);
+    --play-button-border: #7B1FA2;
+    --play-button-shadow-outer: #7B1FA2;
+    --play-button-shadow-inner-dark: #8E24AA;
+    --play-button-shadow-inner-light: #CE93D8;
 
-    /* Kutu Renkleri */
-    --box-bg: #FFC0CB;
-    --box-border: #FF69B4;
-    --inner-box-bg: rgba(255, 240, 245, 0.5);
+    /* Panel/Card Colors */
+    --box-bg: var(--c-primary);
+    --box-border: var(--c-border);
+    --inner-box-bg: rgba(255, 255, 255, 0.3);
 
-    /* Uyarı Kutuları */
-    --warning-bg: #FFC0CB;
-    --warning-border: #C71585;
-    --warning-text: #C71585;
-    --success-bg: #DDA0DD;
-    --success-border: #9932CC;
-    --success-text: #9932CC;
+    /* State Colors */
+    --warning-bg: #FFF3E0;
+    --warning-border: var(--c-warning);
+    --warning-text: #E65100;
+    --success-bg: #E8F5E8;
+    --success-border: var(--c-success);
+    --success-text: var(--c-success);
+    --info-bg: #E1F5FE;
+    --info-border: var(--c-info);
+    --info-text: #0277BD;
 
-    /* Kategori Renkleri */
-    --category-text: #FF1493;
-    --category-shadow: #C71585;
+    /* Category & Navigation */
+    --category-text: var(--c-text);
+    --category-shadow: var(--c-secondary);
+    
+    /* Sidebar */
+    --sidebar-bg: var(--c-surface);
+    --sidebar-border: var(--c-border);
+    --sidebar-item-hover: var(--c-primary);
+    --sidebar-item-active: var(--c-accent);
 
-    /* Oyun Yolu Konteyner */
-    --game-path-bg-start: #FFC0CB;
-    --game-path-bg-end: #FFB6C1;
-    --game-path-border: #FF69B4;
-    --game-path-label: #C71585;
-    --game-path-text: #DB7093;
+    /* Game Path Container */
+    --game-path-bg-start: #FCE4EC;
+    --game-path-bg-end: #F8BBD9;
+    --game-path-border: var(--c-border);
+    --game-path-label: var(--c-text);
+    --game-path-text: var(--c-text-light);
 
-    /* Animasyonlar */
+    /* Animations */
     --float-animation-distance: -15px;
     --background-scroll-speed: 15s;
+    --transition-fast: 160ms cubic-bezier(0.22, 0.68, 0, 1);
+    --transition-medium: 220ms cubic-bezier(0.22, 0.68, 0, 1);
+    --transition-slow: 320ms cubic-bezier(0.22, 0.68, 0, 1);
 }
