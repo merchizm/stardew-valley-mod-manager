@@ -3,24 +3,58 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 use tauri::{WebviewWindow, Emitter};
 use tokio::fs;
+use std::env;
+
+fn expand_path(path: &str) -> PathBuf {
+    if path.starts_with("~/") {
+        if let Some(home) = env::var("HOME").ok() {
+            PathBuf::from(home).join(&path[2..])
+        } else {
+            PathBuf::from(path)
+        }
+    } else {
+        PathBuf::from(path)
+    }
+}
 
 pub async fn find_steam_game_path() -> Result<GameInfo, Box<dyn std::error::Error>> {
-    let possible_paths = vec![
-        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Stardew Valley",
-        "C:\\Program Files\\Steam\\steamapps\\common\\Stardew Valley",
-        "D:\\SteamLibrary\\steamapps\\common\\Stardew Valley",
-        "E:\\SteamLibrary\\steamapps\\common\\Stardew Valley",
-        "F:\\SteamLibrary\\steamapps\\common\\Stardew Valley",
-    ];
+    let possible_paths = if cfg!(target_os = "windows") {
+        vec![
+            "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Stardew Valley",
+            "C:\\Program Files\\Steam\\steamapps\\common\\Stardew Valley",
+            "D:\\SteamLibrary\\steamapps\\common\\Stardew Valley",
+            "E:\\SteamLibrary\\steamapps\\common\\Stardew Valley",
+            "F:\\SteamLibrary\\steamapps\\common\\Stardew Valley",
+        ]
+    } else if cfg!(target_os = "macos") {
+        vec![
+            "~/Library/Application Support/Steam/steamapps/common/Stardew Valley",
+            "/Users/Shared/Steam/steamapps/common/Stardew Valley",
+        ]
+    } else if cfg!(target_os = "linux") {
+        vec![
+            "~/.steam/steam/steamapps/common/Stardew Valley",
+            "~/.local/share/Steam/steamapps/common/Stardew Valley",
+            "/home/steam/.steam/steam/steamapps/common/Stardew Valley",
+        ]
+    } else {
+        vec![]
+    };
 
     for game_path in possible_paths {
-        let path = Path::new(game_path);
+        let path = expand_path(game_path);
         if path.exists() {
-            let smapi_path = path.join("StardewModdingAPI.exe");
+            let smapi_executable = if cfg!(target_os = "windows") {
+                "StardewModdingAPI.exe"
+            } else {
+                "StardewModdingAPI"
+            };
+            
+            let smapi_path = path.join(smapi_executable);
             let has_smapi = smapi_path.exists();
             
             return Ok(GameInfo {
-                game_path: game_path.to_string(),
+                game_path: path.to_string_lossy().to_string(),
                 smapi_path: if has_smapi {
                     Some(smapi_path.to_string_lossy().to_string())
                 } else {
